@@ -3,9 +3,14 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import Todo from './models/Todo.js'
 import User from './models/User.js'
 import { auth, adminAuth } from './middleware/auth.js'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 dotenv.config()
 
@@ -122,9 +127,12 @@ app.delete('/api/todos/:id', auth, async (req, res) => {
   }
 })
 
-// Catch-all route for debugging
+// Serve static files from React build
+app.use(express.static(path.join(__dirname, '../dist')))
+
+// Serve React app for all non-API routes
 app.get('*', (req, res) => {
-  res.status(404).json({ error: `Cannot GET ${req.path}`, availableRoutes: ['/api/test', '/api/register', '/api/login', '/api/todos'] })
+  res.sendFile(path.join(__dirname, '../dist/index.html'))
 })
 
 app.listen(PORT, () => {
