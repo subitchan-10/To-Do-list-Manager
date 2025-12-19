@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+
 const TodoApp = () => {
   const [todos, setTodos] = useState([])
   const [newTodo, setNewTodo] = useState('')
@@ -23,7 +25,7 @@ const TodoApp = () => {
 
   const fetchTodos = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/todos')
+      const response = await axios.get(`${API_URL}/api/todos`)
       setTodos(response.data)
     } catch (error) {
       console.error('Error fetching todos:', error)
@@ -32,7 +34,7 @@ const TodoApp = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/admin/users')
+      const response = await axios.get(`${API_URL}/api/admin/users`)
       setUsers(response.data)
     } catch (error) {
       console.error('Error fetching users:', error)
@@ -44,7 +46,7 @@ const TodoApp = () => {
     if (!newTodo.trim()) return
     
     try {
-      const response = await axios.post('http://localhost:8000/api/todos', {
+      const response = await axios.post(`${API_URL}/api/todos`, {
         text: newTodo,
         priority,
         dueTime: dueTime || undefined
@@ -61,7 +63,7 @@ const TodoApp = () => {
   const toggleTodo = async (id) => {
     try {
       const todo = todos.find(t => t._id === id)
-      const response = await axios.put(`http://localhost:8000/api/todos/${id}`, {
+      const response = await axios.put(`${API_URL}/api/todos/${id}`, {
         completed: !todo.completed
       })
       setTodos(todos.map(t => t._id === id ? response.data : t))
@@ -72,7 +74,7 @@ const TodoApp = () => {
 
   const deleteTodo = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/todos/${id}`)
+      await axios.delete(`${API_URL}/api/todos/${id}`)
       setTodos(todos.filter(t => t._id !== id))
     } catch (error) {
       console.error('Error deleting todo:', error)
@@ -82,7 +84,7 @@ const TodoApp = () => {
   const editTodo = async (id, newText) => {
     if (!newText.trim()) return
     try {
-      const response = await axios.put(`http://localhost:8000/api/todos/${id}`, {
+      const response = await axios.put(`${API_URL}/api/todos/${id}`, {
         text: newText
       })
       setTodos(todos.map(t => t._id === id ? response.data : t))
