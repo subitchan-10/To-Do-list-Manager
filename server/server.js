@@ -127,6 +127,11 @@ app.delete('/api/todos/:id', auth, async (req, res) => {
   }
 })
 
+// Root route
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'))
+})
+
 // Serve static files from React build
 app.use(express.static(path.join(__dirname, '../dist')))
 
