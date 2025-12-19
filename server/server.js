@@ -133,9 +133,26 @@ app.use(express.static(clientBuildPath))
 
 // Serve React app for all non-API routes
 app.get('*', (req, res) => {
-  res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
+  const indexPath = path.join(clientBuildPath, 'index.html')
+  res.sendFile(indexPath, (err) => {
     if (err) {
-      res.status(500).json({ error: 'Error serving frontend', message: err.message })
+      // Fallback HTML if build files don't exist
+      res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Todo App</title>
+          <style>body{font-family:Arial;text-align:center;padding:50px}</style>
+        </head>
+        <body>
+          <h1>Todo App</h1>
+          <p>Frontend build not found. Please run:</p>
+          <code>cd client && npm run build</code>
+          <br><br>
+          <a href="/api/test">Test API</a>
+        </body>
+        </html>
+      `)
     }
   })
 })
