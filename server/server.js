@@ -128,16 +128,16 @@ app.delete('/api/todos/:id', auth, async (req, res) => {
 })
 
 // Serve static files from React build
-app.use(express.static(path.join(__dirname, '../client/dist')))
+const clientBuildPath = path.join(__dirname, '../client/dist')
+app.use(express.static(clientBuildPath))
 
 // Serve React app for all non-API routes
 app.get('*', (req, res) => {
-  const indexPath = path.join(__dirname, '../client/dist/index.html')
-  try {
-    res.sendFile(indexPath)
-  } catch (error) {
-    res.status(404).json({ error: 'Frontend build not found. Run: cd client && npm run build' })
-  }
+  res.sendFile(path.join(clientBuildPath, 'index.html'), (err) => {
+    if (err) {
+      res.status(500).json({ error: 'Error serving frontend', message: err.message })
+    }
+  })
 })
 
 app.listen(PORT, () => {
